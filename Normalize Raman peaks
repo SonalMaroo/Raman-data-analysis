@@ -1,0 +1,45 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# File path to the Excel sheet
+filename = 'Raman data.xlsx'
+
+# Read the Excel data (assumes no header, data in alternating X and Y columns)
+data = pd.read_excel(filename, header=None).values
+
+# Determine the number of datasets (each dataset = 2 columns: X and Y)
+num_columns = data.shape[1]
+num_datasets = num_columns // 2
+
+# Initialize plot
+plt.figure(figsize=(12, 8))
+
+# Loop through each dataset to normalize and plot
+for i in range(num_datasets):
+    X = data[:, 2*i]       # odd columns: X data (0-based indexing)
+    Y = data[:, 2*i + 1]   # even columns: Y data
+
+    # Normalize Y values to [0,1]
+    Y_min = np.min(Y)
+    Y_max = np.max(Y)
+    Y_normalized = (Y - Y_min) / (Y_max - Y_min)
+
+    plt.plot(X, Y_normalized, '-o', linewidth=3, markersize=12, label=f'Dataset {i + 1}')
+
+# Customize plot
+plt.xlabel('Raman shift (cm$^{-1}$)', fontsize=35)
+plt.ylabel('Norm. Intensity', fontsize=35)
+plt.title('Wavenumber vs Intensity', fontsize=35)
+plt.legend(fontsize=25)
+plt.xticks(fontsize=25)
+plt.yticks(fontsize=25)
+plt.grid(False)
+plt.box(True)
+plt.gca().spines['bottom'].set_linewidth(3)
+plt.gca().spines['left'].set_linewidth(3)
+plt.gca().spines['top'].set_linewidth(3)
+plt.gca().spines['right'].set_linewidth(3)
+
+plt.tight_layout()
+plt.show()
